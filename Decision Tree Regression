@@ -18,7 +18,7 @@ regressor = DecisionTreeRegressor(random_state = 0)
 regressor.fit(x,y)
 
 #Decision tree visualization if two dimensional
-x_grid = np.arange(min(x['Level']),max(x['Level']),.001)
+x_grid = np.arange(min(x['INDEPENDENT VARIABLEl']),max(x['INDEPENDENT VARIABLE']),.001)
 x_grid = x_grid.reshape((len(x_grid),1))
 plt.scatter(x,y, c= 'black')
 plt.plot(x_grid,regressor.predict(x_grid), c = 'red')
