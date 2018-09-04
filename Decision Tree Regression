@@ -1,0 +1,32 @@
+%config IPcompleter.greedy = True
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+#Importing the dataset
+dataset = pd.read_csv('XXX.csv')
+y = dataset[['DEPENDENT VARIABLE']]
+x = dataset.iloc[:,1:2] #INDEPENDENT VARIABLE
+
+#Splitting the dataset if necessary
+#from sklearn.model_selection import train_test_split
+#x_train, x_test, y_train, y_test = train_test_split(x,y, test_size = 0.2, random_state = 0)
+
+#Decision Tree Regression
+from sklearn.tree import DecisionTreeRegressor
+regressor = DecisionTreeRegressor(random_state = 0)
+regressor.fit(x,y)
+
+#Decision tree visualization if two dimensional
+x_grid = np.arange(min(x['Level']),max(x['Level']),.001)
+x_grid = x_grid.reshape((len(x_grid),1))
+plt.scatter(x,y, c= 'black')
+plt.plot(x_grid,regressor.predict(x_grid), c = 'red')
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.title('Decision Tree Regression')
+plt.show()
+
+#Predicting the dependent variable
+NUMBER = 10
+y_pred = regressor.predict(NUMBER)
