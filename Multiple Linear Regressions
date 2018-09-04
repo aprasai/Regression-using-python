@@ -12,7 +12,7 @@ y = dataset[['COLUMN_NAME']] #dependent variable
 #converting the categorical variable into dummy variables
 x = pd.get_dummies(x, columns = ['State']) #if we delete columns, then all the columns with categorical variable is converted into dummy
 #To avoid the dummy variable trap (for some algorithms)
-x.drop('State_Florida', axis = 1, inplace = True)
+x.drop('Categorical_A', axis = 1, inplace = True)
 
 #Building backward elimination process to determine the optimal number of indipendent variables based on pvalues
 
