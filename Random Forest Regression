@@ -1,0 +1,31 @@
+%config IPcompleter.greedy = True
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+#Importing the dataset
+dataset = pd.read_csv('XXX.csv')
+y = dataset['DEPENDENT VARIABLE']
+x = dataset[['INDEPENDENT VARIABLE']]
+
+#Splitting the dataset into training and test set as necessary
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test = train_test_split(x,y, test_size = .02, random_state = 123)
+
+#Randon Forest Decision Tree Regression
+from sklearn.ensemble import RandomForestRegressor
+regressorRDT = RandomForestRegressor(n_estimators = 300, random_state = 123)
+regressorRDT.fit(x,y)
+
+#predicting specific y value
+NUMBER = 10
+y_pred_RDT = regressorRDT.predict(NUMBER)
+
+#Visualization for two dimensional
+x_grid = pd.DataFrame(np.arange(min(x['INDEPENDENT VARIABLE']),max(x['INDEPENDENT VARIABLE']),.1))
+plt.scatter(x,y, c = 'green')
+plt.plot(x_grid, regressorRDT.predict(x_grid), c = 'blue')
+plt.title('Random Decision Tree Regression')
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.show()
