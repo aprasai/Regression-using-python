@@ -1,0 +1,56 @@
+%config IPCompleter.greedy = True #enabling the suggest when tab is pressed - this line is for coding in Jupyter Notebook
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+Importing the dataset
+dataset = pd.read_csv('XXX.csv')
+x = dataset.iloc[:,:-1] #independent variables (assuming the dependent variable is in the last column)
+y = dataset[['COLUMN_NAME']] #dependent variable
+
+#if there are categorical variables
+#converting the categorical variable into dummy variables
+x = pd.get_dummies(x, columns = ['State']) #if we delete columns, then all the columns with categorical variable is converted into dummy
+#To avoid the dummy variable trap (for some algorithms)
+x.drop('State_Florida', axis = 1, inplace = True)
+
+#Building backward elimination process to determine the optimal number of indipendent variables based on pvalues
+
+def backward_elimination(dependant_var,independant_var,sig_level): #y = dependent column, x = independent column
+    import statsmodels.api as sm #using statsmodel for backward elimination purposes
+    
+    independant_var = sm.add_constant(independant_var) #Since the statsmodels doesnt understand constant,  we add a "Const" variable, that is all "1"s in the beginning
+    
+    for i in range ((len(list(independant_var.columns.values)))): #repeats for the number of independent variables
+        regressor_ols = sm.OLS(dependant_var,independant_var).fit() #running the OLS regressions analysis
+        pvalues = pd.DataFrame((regressor_ols.pvalues)).reset_index() #getting the pvalues for each independent variable
+        if max(pvalues.iloc[:,1])>sig_level: #if the max pvalue is greater than significance allowed
+            delete_column = pvalues.iloc[:,0][pvalues.iloc[:,1]==max(pvalues.iloc[:,1])] #getting the column name with the highest pvalue to delete the column
+            independant_var.drop(columns = delete_column, axis = 1, inplace = True) #dropping the column selected avove
+    
+    final_optimal = dependant_var #the dependent variable
+    final_optimal = final_optimal.join(independant_var) #optimal number of independent variables based on significance level and backward elimination process
+    
+    return  final_optimal
+    
+y_x_opt = pd.DataFrame()
+confidence_level = .95 #confidence interval
+y_x_opt = backward_elimination(y,x,(1-confidence_level))
+
+x = y_x_opt.iloc[:,1:] #independent variables from the backward elimination process
+y = y_x_opt.iloc[:,0] #dependent variable
+
+#Splitting the dataset into training set and test set
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test = train_test_split (x,y, test_size = .2, random_state=0)
+
+#Fitting the linear Regression
+from sklearn.linear_model import LinearRegression
+regressor = LinearRegression()
+regressor.fit(x_train, y_train)
+
+#Predicting the value
+y_pred = regressor.predict(x_test)
+
+
+    
