@@ -1,0 +1,36 @@
+%config IPcompleter.greedy = True
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+#Importing the dataset
+dataset = pd.read_csv('XXX.csv')
+y = dataset[['DEPENDENT VARIABLE']]
+x = dataset.iloc[:,1:2] #INDEPENDENT VARIABLES
+
+#Feature Scaling
+#for SVR class, we need to feature scale because the SVR algorithm doesnt do it on its own
+from sklearn.preprocessing import StandardScaler
+sc_x = StandardScaler()
+sc_y = StandardScaler()
+x= sc_x.fit_transform(x)
+y= sc_y.fit_transform(y).ravel() #using .ravel() to change y to one deminsional array instead of a vector column
+
+#Support Vector Regression
+from sklearn.svm import SVR
+svrRegressor = SVR(kernel = 'rbf')
+svrRegressor.fit(x,y)
+
+#Visualization
+plt.title('SVR Plot')
+plt.xlabel('X')
+plt.ylabel ('Y')
+plt.scatter (x,y, c='red')
+plt.plot(x,svrRegressor.predict(x), c= 'blue')
+plt.show()
+
+
+#Predicting y value for a particular x value
+#Since we applied transformation, we need to trasnform the prediction back
+NUMBER = 10
+y_pred = sc_y.inverse_transform(svrRegressor.predict(sc_x.transform(NUMBER)))
