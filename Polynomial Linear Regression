@@ -1,0 +1,41 @@
+%config IPCompleter.greedy = True
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+#importing the dataset
+dataset = pd.read_csv('XXX.csv')
+y = dataset[['DEPENDENT VARIABLE']]
+x = dataset.iloc[:,1:2] #Independent Variable
+
+#It makes sense to split when the dataset is large
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test = train_test_split(x,y, test_size = 0.25 , random_state = 123)
+
+
+# Polynomial regression model
+from sklearn.preprocessing import PolynomialFeatures
+simplePolynomial = PolynomialFeatures(degree = 5)
+x_poly = pd.DataFrame(simplePolynomial.fit_transform(x_train))
+
+#Essentially, for polynomial regression, we will be doing linear regression but after we have added the appropriate x variables
+#based on their desired exponents
+from sklearn.linear_model import LinearRegression
+linreg1 = LinearRegression()
+linreg1.fit(x_poly,y_train)
+
+#Visualization if two dimensional
+plt.title('Polynomial Regression fit')
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.scatter(x_train,y_train, color = 'red')
+plt.plot(x_train,linreg1.predict(simplePolynomial.fit_transform(x_train)), color = 'blue')
+plt.show()
+
+#Against the test set
+plt.title('Polynomial Regression fit')
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.scatter(x_test,y_test, color = 'red')
+plt.plot(x_test,linreg1.predict(simplePolynomial.fit_transform(x_test)), color = 'blue')
+plt.show()
