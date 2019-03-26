@@ -36,3 +36,9 @@ plt.title ('X vs Y (test)')
 plt.xlabel ('X UNITS')
 plt.ylabel ('Y UNITS')
 plt.show()
+
+#Plotting the residulas against the predicted variable
+visualizer = ResidualsPlot(regressor, hist=False)
+visualizer.fit(x_train, y_train)
+visualizer.score(x_test, y_test)
+visualizer.poof()
